@@ -32,6 +32,7 @@ CMD_HEAD = 0xF5
 CMD_TAIL = 0xF5
 
 # Init
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(WAKE_PIN, GPIO.IN)
 GPIO.setup(RST_PIN, GPIO.OUT)
@@ -122,6 +123,8 @@ def getUserCount():
 
 def main():
     init()
+    res = getUserCount()
+    print(res)
 
 
 if __name__ == "__main__":
