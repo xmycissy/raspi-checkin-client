@@ -75,6 +75,8 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
     DEVICE.flushInput()
     DEVICE.write(sendBuffer)
 
+    print("send: ", sendBuffer)
+
     recvBuffer = []
     timeBefore = time.time()
     timeAfter = time.time()
@@ -105,6 +107,8 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
             else:
                 break
         checksum ^= byte
+
+    print("receive: ", recvBuffer)
 
     BUFFER = recvBuffer
 
