@@ -77,12 +77,14 @@ def sendCommand(data, bytesNeed, timeout):
 
     if len(recvBuffer) != bytesNeed:
         return ACK_TIMEOUT
-    if recvBuffer[0] != CMD_HEAD:
-        return ACK_FAIL
-    if recvBuffer[bytesNeed - 1] != CMD_TAIL:
-        return ACK_FAIL
-    if recvBuffer[1] != sendBuffer[1]:
-        return ACK_FAIL
+
+    if bytesNeed != 0:
+        if recvBuffer[0] != CMD_HEAD:
+            return ACK_FAIL
+        if recvBuffer[bytesNeed - 1] != CMD_TAIL:
+            return ACK_FAIL
+        if recvBuffer[1] != sendBuffer[1]:
+            return ACK_FAIL
 
     checksum = 0
     for index, byte in enumerate(recvBuffer):
