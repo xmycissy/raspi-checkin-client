@@ -155,7 +155,7 @@ def compareOneToN():
         elif BUFFER[4] == ACK_TIMEOUT:
             return buildResponse(ACK_TIMEOUT, 0)
 
-        userID = BUFFER[2] << 8 + BUFFER[3]
+        userID = (BUFFER[2] << 8) + BUFFER[3]
         return buildResponse(ACK_SUCCESS, userID)
     else:
         return buildResponse(ACK_FAIL, 0)
@@ -183,9 +183,43 @@ def getFeature():
         return buildResponse(ACK_FAIL, 0)
 
 
+# 按用户号存储特征值到存储芯片
+def storeFeature(userID, feature):
+    global BUFFER
+
+    dataBuffer = [(userID & 0x01100) >> 4, userID & 0x011, 1] + feature
+    cmdBuffer = [0x41, 0, 196, 0, 0]
+    sendCommand(cmdBuffer, 0, 0.1)
+    res = sendCommand(dataBuffer, 8, 5)
+
+    if res == ACK_TIMEOUT:
+        return buildResponse(ACK_TIMEOUT, 0)
+
+    if res == ACK_SUCCESS:
+        if BUFFER[4] == ACK_FAIL:
+            return buildResponse(ACK_FAIL, 0)
+
+        saveUserID = (BUFFER[2] << 4) + BUFFER[3]
+        return buildResponse(ACK_SUCCESS, saveUserID)
+    else:
+        return buildResponse(ACK_FAIL, 0)
+
+
 def main():
     init()
-    print(getFeature())
+
+    print("clear = ", clearAllUser())
+    print("storage = ", getUserCount())
+
+    userID = 2
+    feature = [19, 17, 147, 233, 33, 22, 6, 232, 129, 31, 10, 146, 161, 46, 159, 236, 161, 66, 152, 213, 129, 84, 159, 23, 193, 93, 31, 217, 33, 18, 15, 18, 194, 25, 148, 148, 34, 26, 143, 40, 194, 30, 3, 16, 226, 47, 19, 82, 226, 48, 35, 149, 226, 51, 41, 236, 194, 55, 135, 209, 2, 56, 168, 214, 34, 72, 38, 215, 2, 72, 137, 230, 162, 107, 144, 164,
+               2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    print("user = ", userID)
+    print("feature = ", feature)
+
+    print(storeFeature(userID, feature))
+
+    print("clear = ", clearAllUser())
 
 
 if __name__ == "__main__":
