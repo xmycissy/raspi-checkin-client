@@ -86,18 +86,17 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
             recvBuffer += DEVICE.read(bytesCanRecv)
         timeAfter = time.time()
 
+    print("received: ", recvBuffer)
+
     if len(recvBuffer) != bytesNeed:
         return ACK_TIMEOUT
 
-    if bytesNeed != 0:
-        if recvBuffer[0] != CMD_HEAD:
-            return ACK_FAIL
-        if recvBuffer[bytesNeed - 1] != CMD_TAIL:
-            return ACK_FAIL
-        if recvBuffer[1] != sendBuffer[1]:
-            return ACK_FAIL
-
-    print("received: ", recvBuffer)
+    if recvBuffer[0] != CMD_HEAD:
+        return ACK_FAIL
+    if recvBuffer[bytesNeed - 1] != CMD_TAIL:
+        return ACK_FAIL
+    if recvBuffer[1] != sendBuffer[1]:
+        return ACK_FAIL
 
     checksum = 0
     for index, byte in enumerate(recvBuffer):
