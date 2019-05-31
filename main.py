@@ -121,10 +121,25 @@ def getUserCount():
         return buildResponse(res, 0)
 
 
+def clearAllUser():
+    global BUFFER
+
+    cmdBuffer = [0x05, 0, 0, 0, 0]
+    res = sendCommand(cmdBuffer, 8, 5)
+
+    if res == ACK_TIMEOUT:
+        return buildResponse(ACK_TIMEOUT, False)
+    if res == ACK_SUCCESS and BUFFER[4] == ACK_SUCCESS:
+        return buildResponse(ACK_SUCCESS, True)
+    else:
+        return buildResponse(ACK_FAIL, False)
+
+
 def main():
     init()
-    res = getUserCount()
-    print(res)
+    print(getUserCount())
+    print(clearAllUser())
+    print(getUserCount())
 
 
 if __name__ == "__main__":
