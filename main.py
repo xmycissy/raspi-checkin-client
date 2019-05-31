@@ -50,18 +50,27 @@ def init():
     time.sleep(0.25)
 
 
-def sendCommand(data, bytesNeed, timeout):
+def sendCommand(cmd, bytesNeed, timeout, data=[]):
     global BUFFER
 
     checksum = 0
     sendBuffer = []
 
     sendBuffer.append(CMD_HEAD)
-    for byte in data:
+    for byte in cmd:
         sendBuffer.append(byte)
         checksum ^= byte
     sendBuffer.append(checksum)
     sendBuffer.append(CMD_TAIL)
+
+    if len(data) > 0:
+        checksum = 0
+        sendBuffer.append(CMD_HEAD)
+        for byte in data:
+            sendBuffer.append(byte)
+            checksum ^= byte
+        sendBuffer.append(checksum)
+        sendBuffer.append(CMD_TAIL)
 
     DEVICE.flushInput()
     DEVICE.write(sendBuffer)
@@ -191,8 +200,7 @@ def storeFeature(userID, feature):
 
     dataBuffer = [(userID & 0x01100) >> 4, userID & 0x011, 1] + feature
     cmdBuffer = [0x41, 0, 196, 0, 0]
-    sendCommand(cmdBuffer, 0, 0)
-    res = sendCommand(dataBuffer, 8, 5)
+    res = sendCommand(cmdBuffer, 8, 5, dataBuffer)
 
     if res == ACK_TIMEOUT:
         return buildResponse(ACK_TIMEOUT, 0)
