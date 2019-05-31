@@ -42,6 +42,13 @@ DEVICE = serial.Serial("/dev/ttyS0", 19200)
 BUFFER = []
 
 
+def init():
+    GPIO.output(RST_PIN, GPIO.LOW)
+    time.sleep(0.25)
+    GPIO.output(RST_PIN, GPIO.HIGH)
+    time.sleep(0.25)
+
+
 def sendCommand(data, bytesNeed, timeout):
     global BUFFER
 
@@ -113,6 +120,15 @@ def getUserCount():
         return buildResponse(res, 0)
 
 
+def main():
+    init()
+
+
 if __name__ == "__main__":
-    res = getUserCount()
-    print(res)
+    try:
+        main()
+    except KeyboardInterrupt:
+        if DEVICE != None:
+            DEVICE.close()
+        GPIO.cleanup()
+        sys.exit()
