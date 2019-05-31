@@ -198,7 +198,7 @@ def getFeature():
 def storeFeature(userID, feature):
     global BUFFER
 
-    dataBuffer = [(userID & 0x0F0) >> 8, userID & 0x0F, 1] + feature
+    dataBuffer = [(userID & 0x0FF00) >> 8, userID & 0x0FF, 1] + feature
     cmdBuffer = [0x41, 0, 196, 0, 0]
     res = sendCommand(cmdBuffer, 8, 20, dataBuffer)
 
