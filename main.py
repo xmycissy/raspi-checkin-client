@@ -191,7 +191,7 @@ def storeFeature(userID, feature):
 
     dataBuffer = [(userID & 0x01100) >> 4, userID & 0x011, 1] + feature
     cmdBuffer = [0x41, 0, 196, 0, 0]
-    sendCommand(cmdBuffer, 0, 0.1)
+    sendCommand(cmdBuffer, 0, 0)
     res = sendCommand(dataBuffer, 8, 5)
 
     if res == ACK_TIMEOUT:
@@ -221,6 +221,7 @@ def main():
 
     print(storeFeature(userID, feature))
 
+    print("storage = ", getUserCount())
     print("clear = ", clearAllUser())
 
 
