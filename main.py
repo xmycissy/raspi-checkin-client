@@ -39,7 +39,12 @@ GPIO.setup(RST_PIN, GPIO.OUT)
 GPIO.setup(RST_PIN, GPIO.OUT, initial=GPIO.HIGH)
 SLEEPING = 0
 LOCK = threading.RLock()
-DEVICE = serial.Serial("/dev/ttyS0", 19200)
+DEVICE = serial.Serial(
+    port="/dev/ttyS0",
+    baudrate=19200,
+    bytesize=serial.EIGHTBITS,
+    timeout=1
+)
 BUFFER = []
 
 
