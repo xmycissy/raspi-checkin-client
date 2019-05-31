@@ -161,6 +161,7 @@ def compareOneToN():
         return buildResponse(ACK_FAIL, 0)
 
 
+# 取指纹特征值并上传
 def getFeature():
     global BUFFER
 
