@@ -13,12 +13,12 @@ TRUE = 1
 FALSE = 0
 
 # Basic response message definition
-ACK_SUCCESS = 0x00
-ACK_FAIL = 0x01
-ACK_FULL = 0x04
-ACK_NO_USER = 0x05
-ACK_TIMEOUT = 0x08
-ACK_GO_OUT = 0x0F
+ACK_SUCCESS = 0x00  # 操作成功
+ACK_FAIL = 0x01  # 操作失败
+ACK_FULL = 0x04  # 指纹数据库已满
+ACK_NO_USER = 0x05  # 无此用户
+ACK_USER_EXIST = 0x06  # 用户已存在
+ACK_TIMEOUT = 0x08  # 采集超时
 
 # User information definition
 ACK_ALL_USER = 0x00
@@ -107,6 +107,7 @@ def buildResponse(status, data):
     }
 
 
+# 取用户总数
 def getUserCount():
     global BUFFER
 
@@ -115,12 +116,14 @@ def getUserCount():
 
     if res == ACK_TIMEOUT:
         return buildResponse(ACK_TIMEOUT, 0)
+
     if res == ACK_SUCCESS and BUFFER[4] == ACK_SUCCESS:
         return buildResponse(ACK_SUCCESS, BUFFER[3])
     else:
         return buildResponse(res, 0)
 
 
+# 删除所有用户
 def clearAllUser():
     global BUFFER
 
@@ -129,10 +132,33 @@ def clearAllUser():
 
     if res == ACK_TIMEOUT:
         return buildResponse(ACK_TIMEOUT, False)
+
     if res == ACK_SUCCESS and BUFFER[4] == ACK_SUCCESS:
         return buildResponse(ACK_SUCCESS, True)
     else:
         return buildResponse(ACK_FAIL, False)
+
+
+# 比对 1:N
+def compareOneToN():
+    global BUFFER
+
+    cmdBuffer = [0x0C, 0, 0, 0, 0]
+    res = sendCommand(cmdBuffer, 8, 5)
+
+    if res == ACK_TIMEOUT:
+        return buildResponse(ACK_TIMEOUT, 0)
+
+    if res == ACK_SUCCESS:
+        if BUFFER[4] == ACK_NO_USER:
+            return buildResponse(ACK_NO_USER, 0)
+        elif BUFFER[4] == ACK_TIMEOUT:
+            return buildResponse(ACK_TIMEOUT, 0)
+
+        userID = BUFFER[2] << 8 + BUFFER[3]
+        return buildResponse(ACK_SUCCESS, userID)
+    else:
+        return buildResponse(ACK_FAIL, 0)
 
 
 def main():
