@@ -161,11 +161,30 @@ def compareOneToN():
         return buildResponse(ACK_FAIL, 0)
 
 
+def getFeature():
+    global BUFFER
+
+    cmdBuffer = [0x23, 0, 0, 0, 0]
+    res = sendCommand(cmdBuffer, 207, 6)
+
+    if res == ACK_TIMEOUT:
+        return buildResponse(ACK_TIMEOUT, 0)
+
+    if res == ACK_SUCCESS:
+        if BUFFER[4] == ACK_TIMEOUT:
+            return buildResponse(ACK_TIMEOUT, 0)
+        elif BUFFER[4] == ACK_FAIL:
+            return buildResponse(ACK_FAIL, 0)
+
+        feature = BUFFER[12:204]
+        return buildResponse(ACK_SUCCESS, feature)
+    else:
+        return buildResponse(ACK_FAIL, 0)
+
+
 def main():
     init()
-    print(getUserCount())
-    print(clearAllUser())
-    print(getUserCount())
+    print(getFeature())
 
 
 if __name__ == "__main__":
