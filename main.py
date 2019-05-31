@@ -74,8 +74,7 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
         dataSendBuffer.append(CMD_TAIL)
 
     DEVICE.flushInput()
-    DEVICE.write(sendBuffer)
-    DEVICE.write(dataSendBuffer)
+    DEVICE.write(sendBuffer + dataSendBuffer)
 
     print("cmd sent: ", sendBuffer)
     print("data sent: ", dataSendBuffer)
