@@ -200,7 +200,7 @@ def storeFeature(userID, feature):
 
     dataBuffer = [(userID & 0x01100) >> 4, userID & 0x011, 1] + feature
     cmdBuffer = [0x41, 0, 196, 0, 0]
-    res = sendCommand(cmdBuffer, 8, 5, dataBuffer)
+    res = sendCommand(cmdBuffer, 8, 20, dataBuffer)
 
     if res == ACK_TIMEOUT:
         return buildResponse(ACK_TIMEOUT, 0)
