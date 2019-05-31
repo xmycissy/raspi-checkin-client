@@ -111,3 +111,8 @@ def getUserCount():
         return buildResponse(ACK_SUCCESS, BUFFER[3])
     else:
         return buildResponse(res, 0)
+
+
+if __name__ == "__main__":
+    res = getUserCount()
+    print(res)
