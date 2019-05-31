@@ -55,6 +55,7 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
 
     checksum = 0
     sendBuffer = []
+    dataSendBuffer = []
 
     sendBuffer.append(CMD_HEAD)
     for byte in cmd:
@@ -63,21 +64,21 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
     sendBuffer.append(checksum)
     sendBuffer.append(CMD_TAIL)
 
-    DEVICE.flushInput()
-    DEVICE.write(sendBuffer)
-
-    print("sent: ", sendBuffer)
-
     if len(data) > 0:
         checksum = 0
-        sendBuffer = []
-        sendBuffer.append(CMD_HEAD)
+        dataSendBuffer.append(CMD_HEAD)
         for byte in data:
-            sendBuffer.append(byte)
+            dataSendBuffer.append(byte)
             checksum ^= byte
-        sendBuffer.append(checksum)
-        sendBuffer.append(CMD_TAIL)
-        print("data sent: ", sendBuffer)
+        dataSendBuffer.append(checksum)
+        dataSendBuffer.append(CMD_TAIL)
+
+    DEVICE.flushInput()
+    DEVICE.write(sendBuffer)
+    DEVICE.write(dataSendBuffer)
+
+    print("cmd sent: ", sendBuffer)
+    print("data sent: ", dataSendBuffer)
 
     recvBuffer = []
     timeBefore = time.time()
