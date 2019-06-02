@@ -83,9 +83,6 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
     DEVICE.flushInput()
     DEVICE.write(sendBuffer + dataSendBuffer)
 
-    print("cmd sent: ", sendBuffer)
-    print("data sent: ", dataSendBuffer)
-
     recvBuffer = []
     timeBefore = time.time()
     timeAfter = time.time()
@@ -94,8 +91,6 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
         if bytesCanRecv != 0:
             recvBuffer += DEVICE.read(bytesCanRecv)
         timeAfter = time.time()
-
-    print("received: ", recvBuffer)
 
     if len(recvBuffer) != bytesNeed:
         return ACK_TIMEOUT
@@ -117,8 +112,6 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
             else:
                 break
         checksum ^= byte
-
-    print("checked: ", recvBuffer)
 
     BUFFER = recvBuffer
 
