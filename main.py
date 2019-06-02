@@ -74,7 +74,7 @@ def sendCommand(cmd, bytesNeed, timeout, data=[]):
         dataSendBuffer.append(CMD_HEAD)
         for index, byte in enumerate(data):
             dataSendBuffer.append(byte)
-            if index > len(data) - 3:
+            if index >= len(data) - 3:
                 continue
             checksum ^= byte
         dataSendBuffer.append(checksum)
