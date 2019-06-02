@@ -216,7 +216,7 @@ def storeFeature(userID, feature):
         if BUFFER[4] == ACK_FAIL:
             return buildResponse(ACK_FAIL, 0)
 
-        saveUserID = (BUFFER[2] << 4) + BUFFER[3]
+        saveUserID = (BUFFER[2] << 8) + BUFFER[3]
         return buildResponse(ACK_SUCCESS, saveUserID)
     else:
         return buildResponse(ACK_FAIL, 0)
