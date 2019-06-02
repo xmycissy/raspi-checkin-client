@@ -249,6 +249,7 @@ def main():
     res = compareOneToN()
     while res["status"] != ACK_SUCCESS:
         print("again")
+        res = compareOneToN()
     print("matched user id: ", res["data"])
 
     res = getUserCount()
