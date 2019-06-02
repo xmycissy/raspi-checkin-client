@@ -225,29 +225,44 @@ def storeFeature(userID, feature):
 def main():
     init()
 
-    fea = getFeature()
-    print("feature length: ", len(fea["data"]))
+    print("database clearing ...")
+    clearAllUser()
+    print("database cleared")
 
-    print("clear = ", clearAllUser())
-    print("storage = ", getUserCount())
+    res = getUserCount()
+    print("user count: ", res["data"])
 
-    userID = 2
-    feature = [13, 26, 160, 26, 1, 31, 20, 66, 65, 35, 17, 65, 33, 51, 37, 69, 33, 58, 165, 68, 97, 67, 23, 154, 1, 69, 158, 196, 33, 78, 161, 156, 65, 85, 142, 172, 1, 96, 9, 105, 225, 104, 134, 232, 225, 73, 19, 65, 34, 82, 26, 68, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    print("please put your finger on the sensor!")
+    res = getFeature()
+    print("fingerprint feature: ", res["data"])
+    print("length: ", len(res["data"]))
+
+    userID = 1
+    feature = res["data"]
     print("user = ", userID)
-    print("feature = ", feature)
 
-    print(storeFeature(userID, feature))
+    print("user storing ...")
+    storeFeature(userID, feature)
+    print("user stored")
 
-    print("storage = ", getUserCount())
-    print("clear = ", clearAllUser())
+    res = getUserCount()
+    print("user count: ", res["data"])
+
+    print("database clearing ...")
+    clearAllUser()
+    print("database cleared")
+
+
+def beforeExit():
+    if DEVICE != None:
+        DEVICE.close()
+    GPIO.cleanup()
+    sys.exit()
 
 
 if __name__ == "__main__":
     try:
         main()
+        beforeExit()
     except KeyboardInterrupt:
-        if DEVICE != None:
-            DEVICE.close()
-        GPIO.cleanup()
-        sys.exit()
+        beforeExit()
