@@ -202,8 +202,7 @@ def getFeature():
         elif BUFFER[4] == ACK_FAIL:
             return buildResponse(ACK_FAIL, 0)
 
-        feature = BUFFER[12:204]
-        print("checksum: ", BUFFER[205])
+        feature = BUFFER[12:205]
         return buildResponse(ACK_SUCCESS, feature)
     else:
         return buildResponse(ACK_FAIL, 0)
@@ -233,7 +232,8 @@ def storeFeature(userID, feature):
 def main():
     init()
 
-    getFeature()
+    fea = getFeature()
+    print("feature length: ", len(fea["data"]))
 
     print("clear = ", clearAllUser())
     print("storage = ", getUserCount())
