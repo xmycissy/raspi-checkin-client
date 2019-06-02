@@ -232,7 +232,7 @@ def main():
     res = getUserCount()
     print("user count: ", res["data"])
 
-    print("please put your finger on the sensor!")
+    print("put your finger on the sensor!")
     res = getFeature()
     print("fingerprint feature: ", res["data"])
     print("length: ", len(res["data"]))
@@ -244,6 +244,12 @@ def main():
     print("user storing ...")
     storeFeature(userID, feature)
     print("user stored")
+
+    print("now put your finger on the sensor again!")
+    res = compareOneToN()
+    while res["status"] != ACK_SUCCESS:
+        print("again")
+    print("matched user id: ", res["data"])
 
     res = getUserCount()
     print("user count: ", res["data"])
