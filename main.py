@@ -10,31 +10,32 @@ serverPort = 8080
 
 # 全局变量
 isExiting = False
-sensorActive = False
+sensorRequest = False
+sensorRequestID = 0
 
 
 def sensorLoop():
-    global isExiting, sensorActive
+    global isExiting, sensorRequest, sensorRequestID
 
     while True:
         if isExiting:
             break
 
-        if sensorActive:
-            print("sensor!")
-            sensorActive = False
+        if sensorRequest:
+            print("sensor:", sensorRequestID)
+            sensorRequest = False
 
-        time.sleep(1)
+        time.sleep(0.1)
 
 
 def httpServer():
-    global isExiting, sensorActive
+    global isExiting, sensorRequest, sensorRequestID
 
     serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     serverSocket.bind((serverHost, serverPort))
     serverSocket.listen(1)
 
-    print('Listening on port %s ...' % serverPort)
+    print('listening on port %s ...' % serverPort)
 
     while True:
         if isExiting:
@@ -43,12 +44,23 @@ def httpServer():
         connection, address = serverSocket.accept()
         request = connection.recv(1024).decode()
 
-        sensorActive = True
+        print('get request from', address)
+        try:
+            reqID = int(request.split(' ')[1][1:])
+        except ValueError:
+            reqID = 0
 
-        print('Get request from ', address, ':')
-        print('---\n', request, '\n---')
+        print("request:", reqID)
 
-        content = 'hello world'
+        if reqID == 0:
+            print('abort')
+            content = 'no'
+        else:
+            print('accept')
+            content = 'yes'
+
+            sensorRequest = True
+            sensorRequestID = reqID
 
         response = 'HTTP/1.0 200 OK\nContent-Length: ' + \
             str(len(content))+'\n\n' + content
@@ -89,5 +101,5 @@ if __name__ == "__main__":
     except:
         isExiting = True
         print("exiting ...")
-        time.sleep(3)
+        time.sleep(1)
         exiting()
