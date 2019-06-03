@@ -192,7 +192,7 @@ def clearAllUser():
     global globalBuffer
 
     cmdBuffer = [0x05, 0, 0, 0, 0]
-    res = sendCommand(cmdBuffer, 8, 5)
+    res = sendCommand(cmdBuffer, 8, 1)
 
     if res == ACK_TIMEOUT:
         return (ACK_TIMEOUT, False)
@@ -208,7 +208,7 @@ def compareOneToN():
     global globalBuffer
 
     cmdBuffer = [0x0C, 0, 0, 0, 0]
-    res = sendCommand(cmdBuffer, 8, 5)
+    res = sendCommand(cmdBuffer, 8, 10)
 
     if res == ACK_TIMEOUT:
         return (ACK_TIMEOUT, 0)
@@ -230,7 +230,7 @@ def getFeature():
     global globalBuffer
 
     cmdBuffer = [0x23, 0, 0, 0, 0]
-    res = sendCommand(cmdBuffer, 207, 6)
+    res = sendCommand(cmdBuffer, 207, 10)
 
     if res == ACK_TIMEOUT:
         return (ACK_TIMEOUT, 0)
@@ -253,7 +253,7 @@ def storeFeature(userID, feature):
 
     dataBuffer = [(userID & 0x0FF00) >> 8, userID & 0x0FF, 1] + feature
     cmdBuffer = [0x41, 0, 196, 0, 0]
-    res = sendCommand(cmdBuffer, 8, 20, dataBuffer)
+    res = sendCommand(cmdBuffer, 8, 1, dataBuffer)
 
     if res == ACK_TIMEOUT:
         return (ACK_TIMEOUT, 0)
