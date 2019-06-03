@@ -9,3 +9,7 @@
 ## 依赖
 
     sudo apt-get install python3-rpi.gpio python3-serial
+
+
+
+///
