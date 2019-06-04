@@ -35,8 +35,52 @@ userList = []
 signLog = []
 
 
+def getUserFromList(userID):
+    global userList
+
+    for user in userList:
+        if user['id'] == userID:
+            return user
+
+
+def getUserFromLog(userID):
+    global signLog
+
+    for log in signLog:
+        if log['id'] == userID:
+            return log
+
+
+def userLogin(userID):
+    global signLog
+
+    for log in signLog:
+        if log['id'] != userID:
+            continue
+
+        log['logs'].append((time.time(), 0))
+        return
+
+    signLog.append({
+        'id': userID,
+        'logs': [(time.time(), 0)],
+        'status': 1
+    })
+
+
+def userLogout(userID):
+    global signLog
+
+    for log in signLog:
+        if log['id'] != userID:
+            continue
+
+        log['logs'][-1][1] = time.time()
+        return
+
+
 def sensorLoop():
-    global isExiting, sensorRequest, sensorRequestID
+    global isExiting, sensorRequest, sensorRequestID, signLog
 
     while True:
         if isExiting:
@@ -45,6 +89,10 @@ def sensorLoop():
         if sensorRequest:
             print("sensor:", sensorRequestID)
             sensorRequest = False
+        else:
+            res = compareOneToN()
+            if res[0] == ACK_SUCCESS:
+                userLogin(res[1])
 
         time.sleep(0.1)
 
