@@ -193,7 +193,7 @@ def getUserList():
 
     print("got user list:", res[1])
 
-    for item in res[1]:
+    for item in res[1]['data']:
         userList.append({
             'id': item['id'],
             'feature': item['fingerprint'],
