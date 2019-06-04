@@ -194,11 +194,14 @@ def getUserList():
     print("got user list:", res[1])
 
     for item in res[1]['data']:
-        userList.append({
-            'id': item['id'],
-            'feature': item['fingerprint'],
-            'mac': item['mac']
-        })
+        if len(item['fingerprint']) == 193:
+            userList.append({
+                'id': item['id'],
+                'feature': item['fingerprint'],
+                'mac': item['mac']
+            })
+        else:
+            print('user %s fingerprint not valid' % item['id'])
 
 
 def sensorInit():
