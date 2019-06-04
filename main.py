@@ -134,7 +134,7 @@ def checkLoop():
                         res += line
                 if res.find('1 received') == -1 and log['logs'][-1][1] == 0:
                     userLogout(log['id'])
-                elif log['logs'][-1][1] != 0:
+                elif res.find('1 received') > -1 and log['logs'][-1][1] != 0:
                     userLogin(log['id'])
 
         time.sleep(1)
