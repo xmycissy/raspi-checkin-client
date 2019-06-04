@@ -105,7 +105,7 @@ def sensorLoop():
 
 
 def checkLoop():
-    global signLog
+    global isExiting, signLog
 
     i = -1
 
@@ -117,6 +117,8 @@ def checkLoop():
         if i == 0:
             for log in signLog:
                 mac = getUserFromList(log['id'])['mac']
+                if mac == None:
+                    continue
                 os.system('l2ping -c1 -s32 -t1 "' + mac + '" > /tmp/ping.tmp')
                 res = ''
                 with open('/tmp/ping.tmp') as fp:
