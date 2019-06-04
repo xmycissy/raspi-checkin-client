@@ -83,7 +83,7 @@ def sensorLoop():
             print("sensor:", sensorRequestID)
 
             res = getFeature()
-            while res['status'] != ACK_SUCCESS:
+            while res[0] != ACK_SUCCESS:
                 res = getFeature()
 
             httpClient('post', 'fingerprint', {
