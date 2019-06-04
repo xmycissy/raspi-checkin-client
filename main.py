@@ -11,6 +11,8 @@ serverHost = '0.0.0.0'
 serverPort = 8080
 wakePin = 23
 rstPin = 24
+apiBase = 'http://xxx.com/'
+apiToken = 'xxx'
 
 # 传感器响应类型
 ACK_SUCCESS = 0x00  # 操作成功
@@ -29,6 +31,8 @@ isExiting = False
 sensorRequest = False
 sensorRequestID = 0
 globalBuffer = []
+userList = []
+signLog = []
 
 
 def sensorLoop():
@@ -86,14 +90,34 @@ def httpServer():
 
 
 def httpClient(method, url, data={}):
+    global apiBase, apiToken
+
     if method == 'get':
-        r = requests.get(url)
+        r = requests.get(apiBase + url, headers={'Token': apiToken})
         return (r.status_code, r.json())
     elif method == 'post':
-        r = requests.post(url, json=data)
+        r = requests.post(apiBase + url, json=data,
+                          headers={'Token': apiToken})
         return (r.status_code, r.json())
     else:
         return (0, {})
+
+
+def getUserList():
+    global isExiting, userList
+
+    res = httpClient('get', 'users')
+    if res[0] != 200:
+        isExiting = True
+        exiting()
+        return
+
+    for item in res[1]:
+        userList.append({
+            'id': item['id'],
+            'feature': item['fingerprint'],
+            'mac': item['mac']
+        })
 
 
 def sensorInit():
@@ -268,6 +292,15 @@ def storeFeature(userID, feature):
         return (ACK_FAIL, 0)
 
 
+def storeUserList():
+    global userList
+
+    for user in userList:
+        res = storeFeature(user['id'], user['feature'])
+        if res[0] != ACK_SUCCESS:
+            print("user %d store failed" % user['id'])
+
+
 def exiting():
     serverSocket.close()
     sensorThread.join()
@@ -276,6 +309,11 @@ def exiting():
 
 def start():
     sensorInit()
+    clearAllUser()
+    getUserList()
+    storeUserList()
+    res = getUserCount()
+    print("total %d users" % res[1])
     sensorThread.start()
     httpServer()
 
