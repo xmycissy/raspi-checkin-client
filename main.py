@@ -12,8 +12,8 @@ serverHost = '0.0.0.0'
 serverPort = 8080
 wakePin = 23
 rstPin = 24
-apiBase = 'http://xxx.com/api/'
-apiToken = 'xxx'
+apiBase = 'http://127.0.0.1/api/'
+apiToken = 'testtoken'
 
 # 传感器响应类型
 ACK_SUCCESS = 0x00  # 操作成功
