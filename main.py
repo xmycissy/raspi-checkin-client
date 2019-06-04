@@ -73,7 +73,7 @@ def userLogout(userID):
         if log['id'] != userID:
             continue
 
-        log['logs'][-1] = (log['logs'][0], time.time())
+        log['logs'][-1] = (log['logs'][-1][0], time.time())
         print('user %s logout' % userID)
         return
 
