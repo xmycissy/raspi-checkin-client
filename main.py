@@ -12,7 +12,7 @@ serverHost = '0.0.0.0'
 serverPort = 8080
 wakePin = 23
 rstPin = 24
-apiBase = 'http://xxx.com/'
+apiBase = 'http://xxx.com/api/'
 apiToken = 'xxx'
 
 # 传感器响应类型
@@ -81,6 +81,16 @@ def sensorLoop():
 
         if sensorRequest:
             print("sensor:", sensorRequestID)
+
+            res = getFeature()
+            while res['status'] != ACK_SUCCESS:
+                res = getFeature()
+
+            httpClient('post', 'fingerprint', {
+                'request_id': sensorRequestID,
+                'fingerprint': res[1]
+            })
+
             sensorRequest = False
         else:
             res = compareOneToN()
