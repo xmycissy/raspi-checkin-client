@@ -15,6 +15,8 @@ wakePin = 23
 rstPin = 24
 apiBase = 'http://raspi-checkin-web.test/api/'
 apiToken = 'testtoken'
+interval = 30
+
 
 # 传感器响应类型
 ACK_SUCCESS = 0x00  # 操作成功
@@ -119,7 +121,7 @@ def checkLoop():
         if isExiting:
             break
 
-        i = (i + 1) % 300
+        i = (i + 1) % interval
         if i == 0:
             for log in signLog:
                 mac = getUserFromList(log['id'])['mac']
@@ -417,6 +419,8 @@ def timeToString(t, formatStr="%Y-%m-%d %H:%M:%S"):
 def sendLog():
     global signLog
 
+    print('local logs:', signLog)
+
     data = []
     for log in signLog:
         for item in log['logs']:
@@ -425,6 +429,8 @@ def sendLog():
                 'start_at': timeToString(item[0]),
                 'end_at': timeToString(item[1])
             })
+
+    print('send data:', data)
 
     httpClient('post', 'logs', {
         'data': data
