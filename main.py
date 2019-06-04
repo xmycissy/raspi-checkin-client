@@ -77,56 +77,62 @@ def sensorLoop():
     global isExiting, sensorRequest, sensorRequestID, signLog
 
     while True:
-        if isExiting:
-            break
+        try:
+            if isExiting:
+                break
 
-        if sensorRequest:
-            print("sensor:", sensorRequestID)
+            if sensorRequest:
+                print("sensor:", sensorRequestID)
 
-            res = getFeature()
-            while res[0] != ACK_SUCCESS:
                 res = getFeature()
+                while res[0] != ACK_SUCCESS:
+                    res = getFeature()
 
-            httpClient('post', 'fingerprint', {
-                'request_id': sensorRequestID,
-                'fingerprint': res[1]
-            })
+                httpClient('post', 'fingerprint', {
+                    'request_id': sensorRequestID,
+                    'fingerprint': res[1]
+                })
 
-            sensorRequest = False
-        else:
-            res = compareOneToN()
-            if res[0] == ACK_SUCCESS:
-                userLogin(res[1])
+                sensorRequest = False
+            else:
+                res = compareOneToN()
+                if res[0] == ACK_SUCCESS:
+                    userLogin(res[1])
 
-        time.sleep(0.1)
+            time.sleep(0.1)
+        except KeyboardInterrupt:
+            break
 
 
 def checkLoop():
     global signLog
 
     while True:
-        if isExiting:
+        try:
+            if isExiting:
+                break
+
+            for log in signLog:
+                mac = getUserFromList(log['id'])['mac']
+                os.system('l2ping -c1 -s32 -t1 "' + mac + '" > /tmp/ping.tmp')
+                res = ''
+                with open('/tmp/ping.tmp') as fp:
+                    for line in fp:
+                        res += line
+                if res.find('1 received') == -1:
+                    if log['logs'][-1][1] != 0:
+                        pass
+                    else:
+                        userLogout(log['id'])
+                else:
+                    if log['logs'][-1][1] != 0:
+                        userLogin(log['id'])
+                    else:
+                        pass
+
+            time.sleep(300)
+        except KeyboardInterrupt:
             break
-
-        for log in signLog:
-            mac = getUserFromList(log['id'])['mac']
-            os.system('l2ping -c1 -s32 -t1 "' + mac + '" > /tmp/ping.tmp')
-            res = ''
-            with open('/tmp/ping.tmp') as fp:
-                for line in fp:
-                    res += line
-            if res.find('1 received') == -1:
-                if log['logs'][-1][1] != 0:
-                    pass
-                else:
-                    userLogout(log['id'])
-            else:
-                if log['logs'][-1][1] != 0:
-                    userLogin(log['id'])
-                else:
-                    pass
-
-        time.sleep(300)
 
 
 def httpServer():
@@ -139,34 +145,37 @@ def httpServer():
     print('listening on port %s ...' % serverPort)
 
     while True:
-        if isExiting:
-            break
-
-        connection, address = serverSocket.accept()
-        request = connection.recv(1024).decode()
-
-        print('get request from', address)
         try:
-            reqID = int(request.split(' ')[1][1:])
-        except ValueError:
-            reqID = 0
+            if isExiting:
+                break
 
-        print("request:", reqID)
+            connection, address = serverSocket.accept()
+            request = connection.recv(1024).decode()
 
-        if reqID == 0:
-            print('abort')
-            content = 'no'
-        else:
-            print('accept')
-            content = 'yes'
+            print('get request from', address)
+            try:
+                reqID = int(request.split(' ')[1][1:])
+            except ValueError:
+                reqID = 0
 
-            sensorRequest = True
-            sensorRequestID = reqID
+            print("request:", reqID)
 
-        response = 'HTTP/1.0 200 OK\nContent-Length: ' + \
-            str(len(content))+'\n\n' + content
-        connection.sendall(response.encode())
-        connection.close()
+            if reqID == 0:
+                print('abort')
+                content = 'no'
+            else:
+                print('accept')
+                content = 'yes'
+
+                sensorRequest = True
+                sensorRequestID = reqID
+
+            response = 'HTTP/1.0 200 OK\nContent-Length: ' + \
+                str(len(content))+'\n\n' + content
+            connection.sendall(response.encode())
+            connection.close()
+        except KeyboardInterrupt:
+            break
 
 
 def httpClient(method, url, data={}):
