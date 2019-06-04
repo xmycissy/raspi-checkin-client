@@ -380,7 +380,25 @@ def storeUserList():
             print("user %d store failed" % user['id'])
 
 
+def sendLog():
+    global signLog
+
+    data = []
+    for log in signLog:
+        for item in log['logs']:
+            data.append({
+                'user_id': log['id'],
+                'start_at': item[0],
+                'end_at': item[1]
+            })
+
+    httpClient('post', 'logs', {
+        'data': data
+    })
+
+
 def exiting():
+    sendLog()
     serverSocket.close()
     sensorThread.join()
     checkThread.join()
