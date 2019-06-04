@@ -380,6 +380,16 @@ def storeUserList():
             print("user %d store failed" % user['id'])
 
 
+def timeToString(t, formatStr="%Y-%m-%d %H:%M:%S"):
+    if t == 0:
+        timeStamp = int(time.time())
+    else:
+        timeStamp = int(t)
+    timeArray = time.localtime(timeStamp)
+    strDate = time.strftime(formatStr, timeArray)
+    return strDate
+
+
 def sendLog():
     global signLog
 
@@ -388,8 +398,8 @@ def sendLog():
         for item in log['logs']:
             data.append({
                 'user_id': log['id'],
-                'start_at': item[0],
-                'end_at': item[1]
+                'start_at': timeToString(item[0]),
+                'end_at': timeToString(item[1])
             })
 
     httpClient('post', 'logs', {
