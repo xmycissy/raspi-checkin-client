@@ -123,6 +123,7 @@ def checkLoop():
 
         i = (i + 1) % interval
         if i == 0:
+            print('chekcing ...')
             for log in signLog:
                 mac = getUserFromList(log['id'])['mac']
                 if mac == None:
