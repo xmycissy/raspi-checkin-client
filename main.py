@@ -53,6 +53,7 @@ def userLogin(userID):
             continue
 
         log['logs'].append((time.time(), 0))
+        print('user %s login' % userID)
         return
 
     signLog.append({
@@ -60,6 +61,7 @@ def userLogin(userID):
         'logs': [(time.time(), 0)],
         'status': 1
     })
+    print('user %s first login' % userID)
 
 
 def userLogout(userID):
@@ -70,6 +72,7 @@ def userLogout(userID):
             continue
 
         log['logs'][-1][1] = time.time()
+        print('user %s logout' % userID)
         return
 
 
@@ -434,8 +437,6 @@ def sendLog():
 def exiting():
     sendLog()
     serverSocket.close()
-    sensorThread.join()
-    checkThread.join()
     sys.exit()
 
 
