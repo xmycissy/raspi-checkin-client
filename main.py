@@ -191,6 +191,8 @@ def getUserList():
         exiting()
         return
 
+    print("got user list:", res[1])
+
     for item in res[1]:
         userList.append({
             'id': item['id'],
