@@ -1,3 +1,4 @@
+import os
 import time
 import socket
 import threading
@@ -41,14 +42,6 @@ def getUserFromList(userID):
     for user in userList:
         if user['id'] == userID:
             return user
-
-
-def getUserFromLog(userID):
-    global signLog
-
-    for log in signLog:
-        if log['id'] == userID:
-            return log
 
 
 def userLogin(userID):
@@ -98,9 +91,29 @@ def sensorLoop():
 
 
 def checkLoop():
+    global signLog
+
     while True:
         if isExiting:
             break
+
+        for log in signLog:
+            mac = getUserFromList(log['id'])['mac']
+            os.system('l2ping -c1 -s32 -t1 "' + mac + '" > /tmp/ping.tmp')
+            res = ''
+            with open('/tmp/ping.tmp') as fp:
+                for line in fp:
+                    res += line
+            if res.find('1 received') == -1:
+                if log['logs'][-1][1] != 0:
+                    pass
+                else:
+                    userLogout(log['id'])
+            else:
+                if log['logs'][-1][1] != 0:
+                    userLogin(log['id'])
+                else:
+                    pass
 
         time.sleep(300)
 
