@@ -130,16 +130,10 @@ def checkLoop():
                 with open('/tmp/ping.tmp') as fp:
                     for line in fp:
                         res += line
-                if res.find('1 received') == -1:
-                    if log['logs'][-1][1] != 0:
-                        pass
-                    else:
-                        userLogout(log['id'])
-                else:
-                    if log['logs'][-1][1] != 0:
-                        userLogin(log['id'])
-                    else:
-                        pass
+                if res.find('1 received') == -1 and log['logs'][-1][1] == 0:
+                    userLogout(log['id'])
+                elif log['logs'][-1][1] != 0:
+                    userLogin(log['id'])
 
         time.sleep(1)
 
