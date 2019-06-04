@@ -3,6 +3,7 @@ import time
 import socket
 import threading
 import sys
+import json
 import requests
 import serial
 import RPi.GPIO as GPIO
@@ -171,14 +172,20 @@ def httpServer():
 def httpClient(method, url, data={}):
     global apiBase, apiToken
 
-    if method == 'get':
-        r = requests.get(apiBase + url, headers={'Token': apiToken})
-        return (r.status_code, r.json())
-    elif method == 'post':
-        r = requests.post(apiBase + url, json=data,
-                          headers={'Token': apiToken})
-        return (r.status_code, r.json())
-    else:
+    try:
+        if method == 'get':
+            r = requests.get(apiBase + url, headers={'Token': apiToken})
+            print('http client get:', r.json())
+            return (r.status_code, r.json())
+        elif method == 'post':
+            r = requests.post(apiBase + url, json=data,
+                              headers={'Token': apiToken})
+            print('http client post:', r.json())
+            return (r.status_code, r.json())
+        else:
+            return (0, {})
+    except json.decoder.JSONDecodeError:
+        print('json decode error')
         return (0, {})
 
 
@@ -190,8 +197,6 @@ def getUserList():
         isExiting = True
         exiting()
         return
-
-    print("got user list:", res[1])
 
     for item in res[1]['data']:
         if len(item['fingerprint']) == 193:
