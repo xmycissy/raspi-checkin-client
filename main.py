@@ -49,6 +49,14 @@ def sensorLoop():
         time.sleep(0.1)
 
 
+def checkLoop():
+    while True:
+        if isExiting:
+            break
+
+        time.sleep(300)
+
+
 def httpServer():
     global isExiting, sensorRequest, sensorRequestID
 
@@ -304,6 +312,7 @@ def storeUserList():
 def exiting():
     serverSocket.close()
     sensorThread.join()
+    checkThread.join()
     sys.exit()
 
 
@@ -315,12 +324,14 @@ def start():
     res = getUserCount()
     print("total %d users" % res[1])
     sensorThread.start()
+    checkThread.start()
     httpServer()
 
 
 # 线程和设备控制变量
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sensorThread = threading.Thread(target=sensorLoop, name='SensorThread')
+checkThread = threading.Thread(target=checkLoop, name='CheckThread')
 sensorSerial = serial.Serial(
     port="/dev/ttyS0",
     baudrate=19200,
