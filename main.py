@@ -99,7 +99,13 @@ def sensorLoop():
         else:
             res = compareOneToN()
             if res[0] == ACK_SUCCESS:
-                userLogin(res[1])
+                flag = False
+                for log in signLog:
+                    if log['id'] == res[1]:
+                        flag = True
+                        break
+                if not flag:
+                    userLogin(res[1])
 
         time.sleep(0.1)
 
