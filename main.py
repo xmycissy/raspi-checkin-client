@@ -201,7 +201,7 @@ def getUserList():
         return
 
     for item in res[1]['data']:
-        if len(item['fingerprint']) == 193:
+        if item['fingerprint'] != '' and len(item['fingerprint']) == 193:
             userList.append({
                 'id': item['id'],
                 'feature': item['fingerprint'],
