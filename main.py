@@ -172,6 +172,8 @@ def httpServer():
 def httpClient(method, url, data={}):
     global apiBase, apiToken
 
+    print('http client:', method, url, data)
+
     try:
         if method == 'get':
             r = requests.get(apiBase + url, headers={'Token': apiToken})
